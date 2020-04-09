@@ -1,0 +1,3 @@
+rootProject.name='AnimationImageView'
+include ':app'
+include ':animimageview'

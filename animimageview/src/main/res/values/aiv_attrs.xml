@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <declare-styleable name="AnimationImageView">
+        <attr name="aiv_circle_src" format="reference" />
+        <attr name="aiv_anim_circle_src" format="reference" />
+        <attr name="aiv_image_src" format="reference" />
+        <attr name="aiv_scale_offset" format="float" />
+    </declare-styleable>
+</resources>
