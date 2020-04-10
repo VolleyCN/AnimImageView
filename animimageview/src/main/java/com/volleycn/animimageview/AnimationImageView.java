@@ -1,8 +1,8 @@
 package com.volleycn.animimageview;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -22,10 +22,8 @@ import androidx.annotation.NonNull;
  * @Author : MENG
  */
 public class AnimationImageView extends FrameLayout {
-    private boolean isPlay = false;
-    private int bounderWidth = 0;
-    private ObjectAnimator mImageViewScaleAnimatorX, mImageViewScaleAnimatorY,
-            mCircleScaleAnimatorX, mCircleScaleAnimatorY, mCircleAlphaAnimator;
+    private int bounderW = 0;
+    private int bounderH = 0;
     private boolean running;
     private int h;
     private int w;
@@ -79,84 +77,81 @@ public class AnimationImageView extends FrameLayout {
 
     private void initView() {
         try {
-            ViewParent parent = getParent();
-            if (parent != null && parent instanceof ViewGroup) {
-                ViewGroup viewGroup = (ViewGroup) parent;
-                viewGroup.setClipChildren(false);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
             if (imageView == null) {
                 addView(imageView = new ImageView(getContext()));
                 imageView.setImageResource(image_src);
             }
-            if (enablePlay) {
-                if (circle == null) {
-                    addView(circle = new ImageView(getContext()));
-                    circle.setImageResource(circle_src);
-                }
-                if (animatorCircle == null) {
-                    addView(animatorCircle = new ImageView(getContext()));
-                    animatorCircle.setImageResource(anim_circle_src);
-                }
-            }
-            measureView();
+            checkCircle();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private LayoutParams imageViewParams, circleParams, animatorCircleParams;
+    private void checkCircle() {
+        if (enablePlay) {
+            if (circle == null) {
+                addView(circle = new ImageView(getContext()));
+                circle.setImageResource(circle_src);
+            }
+            if (animatorCircle == null) {
+                addView(animatorCircle = new ImageView(getContext()));
+                animatorCircle.setImageResource(anim_circle_src);
+            }
+        } else {
+            removeCircle();
+        }
+    }
+
+    private void removeCircle() {
+        try {
+            if (circle != null) {
+                removeView(circle);
+                circle = null;
+            }
+            if (animatorCircle != null) {
+                removeView(animatorCircle);
+                animatorCircle = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private LayoutParams imageViewParams;
 
     private void measureView() {
         try {
-            if (!enablePlay) {
-                bounderWidth = 0;
-            } else {
-                bounderWidth = (int) (h * scaleOffset);
-            }
+            bounderW = enablePlay ? (int) (w * scaleOffset) : 0;
+            bounderH = enablePlay ? (int) (h * scaleOffset) : 0;
+            checkCircle();
             if (imageView != null) {
                 if (imageViewParams == null) {
-                    imageViewParams = new LayoutParams(w - bounderWidth, h - bounderWidth);
+                    imageViewParams = new LayoutParams(w - bounderW, h - bounderH);
                     imageViewParams.gravity = Gravity.CENTER;
                 } else {
-                    imageViewParams.width = h - bounderWidth;
-                    imageViewParams.height = w - bounderWidth;
+                    imageViewParams.width = w - bounderW;
+                    imageViewParams.height = h - bounderH;
                 }
                 imageView.setLayoutParams(imageViewParams);
             }
-            if (circle != null) {
-                if (enablePlay) {
-                    if (circleParams == null) {
-                        circleParams = new LayoutParams(w - bounderWidth, h - bounderWidth);
-                        circleParams.gravity = Gravity.CENTER;
-                    } else {
-                        circleParams.width = h - bounderWidth;
-                        circleParams.height = w - bounderWidth;
-                    }
-                    circle.setLayoutParams(circleParams);
-                } else {
-                    removeView(circle);
-                    circle = null;
-                }
-
+            if (enablePlay && circle != null) {
+                LayoutParams params = new LayoutParams(w - bounderW, h - bounderH);
+                params.gravity = Gravity.CENTER;
+                circle.setLayoutParams(params);
             }
-            if (animatorCircle != null) {
-                if (enablePlay) {
-                    if (animatorCircleParams == null) {
-                        animatorCircleParams = new LayoutParams(w - bounderWidth, h - bounderWidth);
-                        animatorCircleParams.gravity = Gravity.CENTER;
-                    } else {
-                        animatorCircleParams.width = h - bounderWidth;
-                        animatorCircleParams.height = w - bounderWidth;
-                    }
-                    animatorCircle.setLayoutParams(animatorCircleParams);
-                } else {
-                    removeView(animatorCircle);
-                    animatorCircle = null;
+            if (enablePlay && animatorCircle != null) {
+                LayoutParams params = new LayoutParams(w - bounderW, h - bounderH);
+                params.gravity = Gravity.CENTER;
+                animatorCircle.setLayoutParams(params);
+            }
+            try {
+                ViewParent parent = getParent();
+                if (parent != null && parent instanceof ViewGroup) {
+                    ViewGroup viewGroup = (ViewGroup) parent;
+                    viewGroup.setClipChildren(false);
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,13 +172,6 @@ public class AnimationImageView extends FrameLayout {
 
     public void stopPlay() {
         try {
-            if (isPlay || running) {
-                running = false;
-                isPlay = false;
-            }
-            if (animatorSet != null) {
-                animatorSet.cancel();
-            }
             if (imageView != null) {
                 imageView.clearAnimation();
             }
@@ -193,6 +181,10 @@ public class AnimationImageView extends FrameLayout {
             if (animatorCircle != null) {
                 animatorCircle.clearAnimation();
             }
+            if (animatorSet != null) {
+                animatorSet.cancel();
+            }
+            running = false;
             animatorSet = null;
             measureView();
         } catch (Exception e) {
@@ -214,89 +206,62 @@ public class AnimationImageView extends FrameLayout {
 
     public void startPlay() {
         try {
-            if (!isEnablePlay()) {
+            if (!enablePlay) {
                 stopPlay();
                 return;
             }
-            isPlay = true;
-            initView();
             if (running) {
                 return;
             }
-            checkAnimatorSet();
+            measureView();
+            running = true;
+            if (animatorSet == null) {
+                animatorSet = new AnimatorSet();
+                ObjectAnimator imageViewAnimatorX = ImageViewScaleAnimatorX(imageView);
+                ObjectAnimator imageViewAnimatorY = ImageViewScaleAnimatorY(imageView);
+                ObjectAnimator circleAnimatorX = circleScaleAnimatorX(animatorCircle);
+                ObjectAnimator circleAnimatorY = circleScaleAnimatorY(animatorCircle);
+                ObjectAnimator circleAlphaAnimator = circleAlphaAnimator(animatorCircle);
+                animatorSet.playTogether(setRepeat(imageViewAnimatorX),
+                        setRepeat(imageViewAnimatorY),
+                        setRepeat(circleAnimatorX),
+                        setRepeat(circleAnimatorY),
+                        setRepeat(circleAlphaAnimator));
+            }
             animatorSet.start();
         } catch (Exception e) {
             e.printStackTrace();
+            running = false;
         }
     }
 
-    private void checkAnimatorSet() {
-        if (animatorSet == null) {
-            animatorSet = new AnimatorSet();
-            animatorSet.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    running = true;
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    running = false;
-                    startPlay();
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                    running = false;
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-                }
-            });
-            ObjectAnimator imageViewAnimatorX = ImageViewScaleAnimatorX(imageView);
-            ObjectAnimator imageViewAnimatorY = ImageViewScaleAnimatorY(imageView);
-            ObjectAnimator circleAnimatorX = circleScaleAnimatorX(animatorCircle);
-            ObjectAnimator circleAnimatorY = circleScaleAnimatorY(animatorCircle);
-            ObjectAnimator circleAlphaAnimator = circleAlphaAnimator(animatorCircle);
-            animatorSet.playTogether(imageViewAnimatorX, imageViewAnimatorY, circleAnimatorX, circleAnimatorY, circleAlphaAnimator);
-            animatorSet.setDuration(isPlay ? 1000 : 0);
+    private ObjectAnimator setRepeat(ObjectAnimator objectAnimator) {
+        if (objectAnimator != null) {
+            objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            objectAnimator.setRepeatMode(ValueAnimator.REVERSE);
+            objectAnimator.setDuration(1000);
         }
+        return objectAnimator;
     }
 
     private ObjectAnimator ImageViewScaleAnimatorX(View view) {
-        if (mImageViewScaleAnimatorX == null) {
-            mImageViewScaleAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 0.9f, 1.0f);
-        }
-        return mImageViewScaleAnimatorX;
+        return ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 0.9f, 1.0f);
     }
 
     private ObjectAnimator ImageViewScaleAnimatorY(View view) {
-        if (mImageViewScaleAnimatorY == null) {
-            mImageViewScaleAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 0.9f, 1.0f);
-        }
-        return mImageViewScaleAnimatorY;
+        return ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 0.9f, 1.0f);
     }
 
     private ObjectAnimator circleScaleAnimatorX(View view) {
-        if (mCircleScaleAnimatorX == null) {
-            mCircleScaleAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 1.2f, 1f, 1.2f);
-        }
-        return mCircleScaleAnimatorX;
+        return ObjectAnimator.ofFloat(view, "scaleX", 1.2f, 1f, 1.2f);
     }
 
     private ObjectAnimator circleScaleAnimatorY(View view) {
-        if (mCircleScaleAnimatorY == null) {
-            mCircleScaleAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 1.2f, 1f, 1.2f);
-        }
-        return mCircleScaleAnimatorY;
+        return ObjectAnimator.ofFloat(view, "scaleY", 1.2f, 1f, 1.2f);
     }
 
     private ObjectAnimator circleAlphaAnimator(View view) {
-        if (mCircleAlphaAnimator == null) {
-            mCircleAlphaAnimator = ObjectAnimator.ofFloat(view, "alpha", 0.5f, 0.0f, 1f, 0.0f, 0.1f, 0.0f, 0.5f, 0.0f, 0.1f, 0.0f, 1f, 0.0f, 0.5f);
-        }
-        return mCircleAlphaAnimator;
+        return  ObjectAnimator.ofFloat(view, "alpha", 0.5f, 0.0f, 1f, 0.0f, 0.1f, 0.0f, 0.5f, 0.0f, 0.1f, 0.0f, 1f, 0.0f, 0.5f);
     }
 
     @Override

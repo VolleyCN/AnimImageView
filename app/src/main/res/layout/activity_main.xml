@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="horizontal"
-    android:padding="20dp"
-    tools:context=".MainActivity">
+    android:background="@color/white"
+    android:orientation="vertical">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 
     <com.volleycn.animimageview.AnimationImageView
         android:id="@+id/AnimationImageView"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="20dp" />
-
-    <com.volleycn.animimageview.AnimationImageView
-        android:id="@+id/AnimationImageView1"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="20dp" />
-
-</LinearLayout>
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="20dp"
+        app:aiv_anim_circle_src="@drawable/shape_bg_ded9fb_round"
+        app:aiv_circle_src="@drawable/shape_bg_bdb3f8_round"
+        app:aiv_image_src="@mipmap/icon10" />
+</FrameLayout>
