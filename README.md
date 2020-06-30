@@ -2,7 +2,7 @@
 
 **仿抖音用户直播在线头像动画**
 
-![demo展示](https://github.com/VolleyCN/AnimationImageView/blob/master/img/demo.gif "demo展示")
+![demo展示](https://github.com/VolleyCN/AnimImageView/blob/master/img/demo.gif "demo展示")
 
 ------------
 
