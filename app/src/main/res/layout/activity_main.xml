@@ -12,13 +12,13 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
 
-    <com.volleycn.animimageview.AnimationImageView
+    <com.volleycn.animimageview.PortraitLiveView
         android:id="@+id/AnimationImageView"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="bottom|right"
         android:layout_margin="20dp"
-        app:aiv_anim_circle_src="@drawable/shape_bg_ded9fb_round"
-        app:aiv_circle_src="@drawable/shape_bg_bdb3f8_round"
-        app:aiv_image_src="@mipmap/icon10" />
+        app:plv_anim_src="@drawable/shape_bg_ded9fb_round"
+        app:plv_border_src="@drawable/shape_bg_bdb3f8_round"
+        app:plv_image_src="@mipmap/icon10" />
 </FrameLayout>

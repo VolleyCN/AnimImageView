@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <declare-styleable name="AnimationImageView">
-        <attr name="aiv_circle_src" format="reference" />
-        <attr name="aiv_anim_circle_src" format="reference" />
+        <attr name="aiv_border_src" format="reference" />
+        <attr name="aiv_anim_src" format="reference" />
         <attr name="aiv_image_src" format="reference" />
         <attr name="aiv_scale_offset" format="float" />
+        <attr name="aiv_image_width" format="dimension" />
+        <attr name="aiv_image_height" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="PortraitLiveView">
+        <attr name="plv_border_src" format="reference" />
+        <attr name="plv_anim_src" format="reference" />
+        <attr name="plv_image_src" format="reference" />
+        <attr name="plv_scale_offset" format="float" />
+        <attr name="plv_image_scale" format="boolean" />
+        <attr name="plv_image_width" format="dimension" />
+        <attr name="plv_image_height" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="LiveTagView">
+        <attr name="ltv_column_space" format="dimension" />
+        <attr name="ltv_column_width" format="dimension" />
+        <attr name="ltv_column_count" format="integer" />
+        <attr name="ltv_column_color" format="reference" />
     </declare-styleable>
 </resources>

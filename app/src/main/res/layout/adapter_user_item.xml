@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,30 +8,52 @@
     android:orientation="horizontal"
     tools:context=".MainActivity">
 
-    <com.volleycn.animimageview.AnimationImageView
+    <com.volleycn.animimageview.PortraitLiveView
         android:id="@+id/AnimationImageView"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="20dp" />
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:plv_anim_src="@drawable/shape_bg_bdb3f8_circle"
+        app:plv_border_src="@drawable/shape_bg_bdb3f8_circle"
+        app:plv_image_height="80dp"
+        app:plv_image_scale="true"
+        app:plv_image_width="80dp" />
 
-    <LinearLayout
+    <com.volleycn.animimageview.LiveTagView
+        android:id="@+id/liveTagView"
+        android:layout_width="24dp"
+        android:layout_height="14dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/shape_bg_ded9fb"
+        app:layout_constraintBottom_toBottomOf="@id/AnimationImageView"
+        app:layout_constraintEnd_toEndOf="@id/AnimationImageView"
+        app:layout_constraintStart_toStartOf="@id/AnimationImageView"
+        app:ltv_column_count="3"
+        app:ltv_column_space="2dp"
+        app:ltv_column_width="4dp" />
+
+    <TextView
+        android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginStart="12dp"
+        android:text="@string/app_name"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@id/user_info"
+        app:layout_constraintStart_toEndOf="@+id/AnimationImageView"
+        app:layout_constraintTop_toTopOf="@id/AnimationImageView" />
 
-        <TextView
-            android:id="@+id/user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/user_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/app_name"
-            android:textSize="14sp" />
-    </LinearLayout>
-</LinearLayout>
+    <TextView
+        android:id="@+id/user_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/app_name"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@id/AnimationImageView"
+        app:layout_constraintStart_toStartOf="@id/user_name"
+        app:layout_constraintTop_toBottomOf="@+id/user_name" />
+</androidx.constraintlayout.widget.ConstraintLayout>

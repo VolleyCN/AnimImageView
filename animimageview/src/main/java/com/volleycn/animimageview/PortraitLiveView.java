@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
-/**
- * @Describe
- * @Date : 2020/4/9
- * @Email : zhangmeng@newstylegroup.com
- * @Author : MENG
- */
-public class AnimationImageView extends FrameLayout {
+public class PortraitLiveView extends FrameLayout {
     private boolean running;
     private int mImageH;
     private int mImageW;
@@ -27,51 +22,53 @@ public class AnimationImageView extends FrameLayout {
     private int mBorderViewSrc;
     private int mImageViewSrc;
     private float mScaleOffset = 0.1f;
+    private boolean mImageScale;
 
-    public AnimationImageView(Context context) {
+
+    public PortraitLiveView(Context context) {
         super(context);
         init(context, null);
     }
 
-    public AnimationImageView(Context context, AttributeSet attrs, int defStyle) {
+    public PortraitLiveView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context, attrs);
     }
 
-    public AnimationImageView(Context context, AttributeSet attrs) {
+    public PortraitLiveView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
         if (attrs != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AnimationImageView);
-            mAnimViewSrc = typedArray.getResourceId(R.styleable.AnimationImageView_aiv_anim_src, R.drawable.shape_bg_ded9fb_circle);
-            mBorderViewSrc = typedArray.getResourceId(R.styleable.AnimationImageView_aiv_border_src, R.drawable.shape_bg_bdb3f8_circle);
-            mImageViewSrc = typedArray.getResourceId(R.styleable.AnimationImageView_aiv_image_src, R.drawable.avatar_default);
-            mScaleOffset = typedArray.getFloat(R.styleable.AnimationImageView_aiv_scale_offset, mScaleOffset);
-            mImageW = (int) typedArray.getDimension(R.styleable.AnimationImageView_aiv_image_width, mImageW);
-            mImageH = (int) typedArray.getDimension(R.styleable.AnimationImageView_aiv_image_height, mImageH);
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PortraitLiveView);
+            mAnimViewSrc = typedArray.getResourceId(R.styleable.PortraitLiveView_plv_anim_src, R.drawable.shape_bg_ded9fb_circle);
+            mBorderViewSrc = typedArray.getResourceId(R.styleable.PortraitLiveView_plv_border_src, R.drawable.shape_bg_bdb3f8_circle);
+            mImageViewSrc = typedArray.getResourceId(R.styleable.PortraitLiveView_plv_image_src, R.drawable.avatar_default);
+            mScaleOffset = typedArray.getFloat(R.styleable.PortraitLiveView_plv_scale_offset, mScaleOffset);
+            mImageScale = typedArray.getBoolean(R.styleable.PortraitLiveView_plv_image_scale, false);
+            mImageW = (int) typedArray.getDimension(R.styleable.PortraitLiveView_plv_image_width, mImageW);
+            mImageH = (int) typedArray.getDimension(R.styleable.PortraitLiveView_plv_image_height, mImageH);
             typedArray.recycle();
         }
         initView();
     }
 
-
     private ImageView mImageView;
-    private ImageView mBorderView;
-    private ImageView mAnimatorView;
+    private View mBorderView;
+    private View mAnimatorView;
     private boolean border;
 
     public ImageView getImageView() {
         return mImageView;
     }
 
-    public ImageView getBorderView() {
+    public View getBorderView() {
         return mBorderView;
     }
 
-    public ImageView getAnimatorView() {
+    public View getAnimatorView() {
         return mAnimatorView;
     }
 
@@ -86,14 +83,14 @@ public class AnimationImageView extends FrameLayout {
     private void checkBorderAnimView() {
         if (enablePlay || border) {
             if (mBorderView == null) {
-                addView(mBorderView = new ImageView(getContext()));
-                mBorderView.setImageResource(mBorderViewSrc);
+                addView(mBorderView = new View(getContext()));
+                mBorderView.setBackgroundResource(mBorderViewSrc);
             }
         }
         if (enablePlay) {
             if (mAnimatorView == null) {
-                addView(mAnimatorView = new ImageView(getContext()));
-                mAnimatorView.setImageResource(mAnimViewSrc);
+                addView(mAnimatorView = new View(getContext()));
+                mAnimatorView.setBackgroundResource(mAnimViewSrc);
             }
         } else {
             removeBorderAnimView();
@@ -213,7 +210,7 @@ public class AnimationImageView extends FrameLayout {
         }
         running = true;
         measureView();
-        if (mImageViewScaleAnimator == null) {
+        if (mImageViewScaleAnimator == null && mImageScale) {
             mImageViewScaleAnimator = getValueAnimator(1.0f, 0.9f, 1.0f);
             mImageViewScaleAnimator.addUpdateListener(animator -> {
                 if (mImageView != null && running) {
@@ -224,7 +221,7 @@ public class AnimationImageView extends FrameLayout {
             });
         }
         if (mAminViewScaleAnimator == null) {
-            mAminViewScaleAnimator = getValueAnimator(1f, 0.9f);
+            mAminViewScaleAnimator = getValueAnimator(1.2f, 1f, 1.2f);
             mAminViewScaleAnimator.addUpdateListener(animator -> {
                 if (mAnimatorView != null && running) {
                     float value = (float) animator.getAnimatedValue();
@@ -234,14 +231,16 @@ public class AnimationImageView extends FrameLayout {
             });
         }
         if (mAminViewAlphaAnimator == null) {
-            mAminViewAlphaAnimator = getValueAnimator(1.0f,0.8f);
+            mAminViewAlphaAnimator = getValueAnimator(0.5f, 0.0f, 0.1f, 0.0f, 1f, 0.0f, 0.5f);
             mAminViewAlphaAnimator.addUpdateListener(animator -> {
                 if (mAnimatorView != null && running) {
                     mAnimatorView.setAlpha((float) animator.getAnimatedValue());
                 }
             });
         }
-        mImageViewScaleAnimator.start();
+        if (mImageScale && mImageViewScaleAnimator != null) {
+            mImageViewScaleAnimator.start();
+        }
         mAminViewScaleAnimator.start();
         mAminViewAlphaAnimator.start();
     }
@@ -249,7 +248,7 @@ public class AnimationImageView extends FrameLayout {
 
     private ValueAnimator getValueAnimator(float... values) {
         ValueAnimator animator = ValueAnimator.ofFloat(values);
-        long duration = 1000;
+        long duration = 1500;
         animator.setDuration(duration);
         animator.setRepeatCount(ValueAnimator.INFINITE);
         animator.setRepeatMode(ValueAnimator.REVERSE);

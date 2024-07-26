@@ -6,12 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.SizeUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.volleycn.animimageview.AnimationImageView;
+import com.volleycn.animimageview.LiveTagView;
+import com.volleycn.animimageview.PortraitLiveView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,24 +24,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AnimationImageView imageView = findViewById(R.id.AnimationImageView);
+        PortraitLiveView imageView = findViewById(R.id.AnimationImageView);
         Glide.with(imageView.getContext())
                 .load(R.mipmap.icon10)
-                .optionalTransform(new RoundedCorners(SizeUtils.dp2px(4)))
+                .optionalTransform(new RoundedCorners(10))
                 .placeholder(R.drawable.avatar_default)
                 .into(imageView.getImageView());
         initViewDataINM(imageView);
         initViewData();
     }
 
-    private void initViewDataINM(AnimationImageView imageView) {
+    private void initViewDataINM(PortraitLiveView imageView) {
         imageView.setEnablePlay(!imageView.isEnablePlay());
-        imageView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                initViewDataINM(imageView);
-            }
-        }, 3000);
+//        imageView.postDelayed(() -> initViewDataINM(imageView), 3000);
 
     }
 
@@ -70,13 +65,15 @@ public class MainActivity extends AppCompatActivity {
             protected void convert(BaseViewHolder baseViewHolder, UserInfoEntity userInfoEntity) {
                 baseViewHolder.setText(R.id.user_name, userInfoEntity.getName());
                 baseViewHolder.setText(R.id.user_info, userInfoEntity.getInfo());
-                AnimationImageView imageView = baseViewHolder.getView(R.id.AnimationImageView);
+                PortraitLiveView imageView = baseViewHolder.getView(R.id.AnimationImageView);
+                LiveTagView liveTagView = baseViewHolder.getView(R.id.liveTagView);
                 Glide.with(imageView.getContext())
                         .load(userInfoEntity.getIconRes())
                         .circleCrop()
                         .placeholder(R.drawable.avatar_default)
                         .into(imageView.getImageView());
                 imageView.setEnablePlay(userInfoEntity.isOnline());
+                liveTagView.setEnabledPlay(userInfoEntity.isOnline());
             }
         });
     }

@@ -5,6 +5,6 @@
 
     <stroke
         android:width="@dimen/dimen_1"
-        android:color="@color/color_ded9fb" />
+        android:color="#FDFF00" />
 
 </shape>
